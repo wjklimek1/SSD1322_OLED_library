@@ -19,6 +19,8 @@
 #ifndef SSD1322_HW_DRIVER_H
 #define SSD1322_HW_DRIVER_H
 
+#include <stdint.h>
+
 void SSD1322_HW_drive_CS_low();
 void SSD1322_HW_drive_CS_high();
 void SSD1322_HW_drive_DC_low();
