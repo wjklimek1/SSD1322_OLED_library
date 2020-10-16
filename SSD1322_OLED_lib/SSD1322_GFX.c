@@ -16,6 +16,7 @@
 #include "..\SSD1322_OLED_lib\SSD1322_API.h"
 #include "..\SSD1322_OLED_lib\SSD1322_GFX.h"
 
+#include <stdlib.h>
 
 //====================== draw pixel ========================//
 /**
@@ -35,7 +36,7 @@
  */
 void draw_pixel(uint8_t *frame_buffer, uint16_t x, uint16_t y, uint8_t brightness)
 {
-	if(x > BUFFER_WIDTH || y > BUFFER_HEIGHT)
+	if(x > (BUFFER_WIDTH-1) || y > (BUFFER_HEIGHT-1))
 		return;
 
 	if ((y * BUFFER_WIDTH + x) % 2 == 1)
@@ -117,6 +118,95 @@ void draw_hline(uint8_t *frame_buffer, uint16_t y, uint16_t x0, uint16_t x1, uin
 		}
 	}
 }
+
+//====================== draw sloping line ========================//
+/**
+ *  @brief Draws sloping line
+ *
+ *  Can be also used to draw vertical and horizontal lines.
+ *
+ *  @param[in] frame_buffer
+ *             array of pixel values
+ *  @param[in] x0
+ *             x position of line beginning
+ *  @param[in] y0
+ *             y position of line beginning
+ *  @param[in] x1
+ *             x position of line ending
+ *  @param[in] y1
+ *             y position of line ending
+ * 	@param[in] brightness
+ *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
+*/
+void draw_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
+{
+	//handle horizontal and vertical lines with appropriate functions
+	if (x0 == x1)
+	{
+		draw_vline(frame_buffer, x0, y0, y1, brightness);
+	}
+	if (y0 == y1)
+	{
+		draw_hline(frame_buffer, y0, x0, x1, brightness);
+	}
+
+	int16_t steep = abs(y1 - y0) > abs(x1 - x0);
+	if (steep == 1)
+	{
+		uint16_t tmp = y0;
+		y0 = x0;
+		x0 = tmp;
+		tmp = y1;
+		y1 = x1;
+		x1 = tmp;
+	}
+
+	if (x0 > x1)
+	{
+		uint16_t tmp = x0;
+		x0 = x1;
+		x1 = tmp;
+		tmp = y0;
+		y0 = y1;
+		y1 = tmp;
+	}
+
+	int16_t dx, dy;
+	dx = x1 - x0;
+	dy = abs(y1 - y0);
+
+	int16_t err = dx / 2;
+	int16_t ystep;
+
+	if (y0 < y1)
+	{
+		ystep = 1;
+	}
+	else
+	{
+		ystep = -1;
+	}
+
+	for (; x0 <= x1; x0++)
+	{
+		if (steep)
+		{
+			draw_pixel(frame_buffer, y0, x0, brightness);
+		}
+		else
+		{
+			draw_pixel(frame_buffer, x0, y0, brightness);
+		}
+		err -= dy;
+		if (err < 0)
+		{
+			y0 += ystep;
+			err += dx;
+		}
+	}
+}
+
+
 
 //====================== draw empty rectangle ========================//
 /**
