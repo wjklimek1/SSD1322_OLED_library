@@ -13,10 +13,13 @@
  ****************************************************************************************
  */
 
-#include "..\SSD1322_OLED_lib\SSD1322_API.h"
-#include "..\SSD1322_OLED_lib\SSD1322_GFX.h"
+//====================== Includes ====================//
+#include "../SSD1322_OLED_lib/SSD1322_API.h"
+#include "../SSD1322_OLED_lib/SSD1322_GFX.h"
 
 #include <stdlib.h>
+
+const GFXfont *gfx_font = NULL;     //pointer to Adafruit font that is currently selected
 
 //====================== draw pixel ========================//
 /**
@@ -333,7 +336,6 @@ void draw_circle(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t r, ui
  *             width of bitmap in pixels
  *  @param[in] y_size
  *             height of bitmap in pixels
-
  */
 void draw_bitmap(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
 {
@@ -347,6 +349,110 @@ void draw_bitmap(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint
 			bitmap_pos++;
 		}
 	}
+}
+
+//====================== select font ========================//
+/**
+ *  @brief Select font to write text
+ *
+ *  This function has to be called at least once to define font.
+ *  Next call is needed only when you want to change font to other one.
+ *
+ *  @param[in] new_gfx_font
+ *             pointer to font structure
+ */
+void select_font(const GFXfont *new_gfx_font)
+{
+	gfx_font = new_gfx_font;
+}
+
+//====================== draw single character ========================//
+/**
+ *  @brief Draw single character
+ *
+ *	To draw character font has to be selected.
+ *
+ *  @param[in] frame_buffer
+ *             array of pixel values
+ *  @param[in] c
+ *             ASCII character to draw in buffer
+ *  @param[in] x
+ *             x position of bottom left corner of character
+ *  @param[in] y
+ *             y position of bottom left corner of character
+ * 	@param[in] brightness
+ *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
+ */
+void draw_char(uint8_t *frame_buffer, uint8_t c, uint16_t x, uint16_t y, uint8_t brightness)
+{
+	if(gfx_font == NULL)
+		return;
+
+	c -= (uint8_t)gfx_font->first;          //convert input char to corresponding byte from font array
+    GFXglyph *glyph = gfx_font->glyph + c;  //get pointer of glyph corresponding to char
+    uint8_t *bitmap = gfx_font->bitmap;     //get pointer of char bitmap
+
+    uint16_t bo = glyph->bitmapOffset;
+    uint8_t width = glyph->width;
+    uint8_t height = glyph->height;
+
+    int8_t x_offset = glyph->xOffset;
+    int8_t y_offset = glyph->yOffset;
+
+    //decide for background brightness or font brightness
+    uint8_t bit = 0;
+    uint8_t bits = 0;
+    uint8_t y_pos = 0;
+    uint8_t x_pos = 0;
+
+	for (y_pos = 0; y_pos < height; y_pos++)
+	{
+		for (x_pos = 0; x_pos < width; x_pos++)
+		{
+			if (!(bit++ & 7))
+			{
+				bits = (*(const unsigned char *)(&bitmap[bo++]));
+			}
+			if (bits & 0x80)
+			{
+				draw_pixel(frame_buffer, x + x_offset + x_pos, y + y_offset+y_pos, brightness);
+			}
+			else
+			{
+
+			}
+			bits <<= 1;
+		}
+	}
+}
+
+//====================== draw string ========================//
+/**
+ *  @brief Draw single character
+ *
+ *	To draw string font has to be selected.
+ *
+ *	WARNING: This works only for NULL-terminated strings!
+ *
+ *  @param[in] frame_buffer
+ *             array of pixel values
+ *  @param[in] text
+ *             string with ASCII values
+ *  @param[in] x
+ *             x position of bottom left corner of first character
+ *  @param[in] y
+ *             y position of bottom left corner of first character
+ * 	@param[in] brightness
+ *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
+ */
+void draw_text(uint8_t *frame_buffer, const char* text, uint16_t x, uint16_t y, uint8_t brightness)
+{
+    while (*text)
+    {
+        draw_char(frame_buffer, *text, x, y, brightness);
+        x = x + gfx_font->glyph[*text-32].xAdvance;
+        text++;
+    }
 }
 
 //====================== send frame buffer to OLED ========================//

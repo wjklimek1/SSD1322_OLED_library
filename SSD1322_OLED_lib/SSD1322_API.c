@@ -13,8 +13,8 @@
  ****************************************************************************************
  */
 
-#include "..\SSD1322_OLED_lib\SSD1322_HW_Driver.h"
-#include "..\SSD1322_OLED_lib\SSD1322_API.h"
+#include "../SSD1322_OLED_lib/SSD1322_HW_Driver.h"
+#include "../SSD1322_OLED_lib/SSD1322_API.h"
 
 
 //====================== command ========================//

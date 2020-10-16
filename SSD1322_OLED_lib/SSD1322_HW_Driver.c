@@ -22,7 +22,7 @@
 #include "main.h"
 #include "spi.h"
 
-#include "..\SSD1322_OLED_lib\SSD1322_HW_Driver.h"
+#include "../SSD1322_OLED_lib/SSD1322_HW_Driver.h"
 
 //====================== CS pin low ========================//
 /**

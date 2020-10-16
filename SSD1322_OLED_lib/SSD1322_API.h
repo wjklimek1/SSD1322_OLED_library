@@ -16,7 +16,7 @@
 #ifndef SSD1322_API_H
 #define SSD1322_API_H
 
-#include "..\SSD1322_OLED_lib\SSD1322_HW_Driver.h"
+#include "../SSD1322_OLED_lib/SSD1322_HW_Driver.h"
 
 /*============ Commands defines ============*/
 
