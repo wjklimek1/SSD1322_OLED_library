@@ -49,7 +49,7 @@ void draw_pixel(uint8_t *frame_buffer, uint16_t x, uint16_t y, uint8_t brightnes
 	}
 	else
 	{
-		frame_buffer[((y * BUFFER_WIDTH) + x) / 2] = (frame_buffer[((y * BUFFER_WIDTH) + x) / 2] & 0x0F) | brightness << 4;
+		frame_buffer[((y * BUFFER_WIDTH) + x) / 2] = (frame_buffer[((y * BUFFER_WIDTH) + x) / 2] & 0x0F) | (brightness << 4);
 	}
 }
 
@@ -456,12 +456,60 @@ void draw_bitmap(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint
 {
 	uint16_t bitmap_pos = 0;
 
+	for (uint16_t i = y0; i < y0 + y_size; i++)
+	{
+		for (uint16_t j = x0; j < x0 + x_size; j++)
+		{
+			draw_pixel(frame_buffer, j, i, bitmap[bitmap_pos] >> 4);
+			bitmap_pos++;
+		}
+	}
+}
+
+//====================== draw 4-bit bitmap ========================//
+/**
+ *  @brief Draws bitmap with 4-bit grayscale depth to frame buffer.
+ *
+ * 	Writes bitmap where 2 pixels are coden in a single byte.
+ *
+ * 	WARNING: This function is still untested!
+ *
+ *  @param[in] frame_buffer
+ *             array of pixel values
+ *  @param[in] bitmap
+ *  		   array with pixels to write to frame buffer
+ *  @param[in] x0
+ *             x position of top left bitmap corner
+ *  @param[in] y0
+ *             y position of top left bitmap corner
+ *  @param[in] x_size
+ *             width of bitmap in pixels
+ *  @param[in] y_size
+ *             height of bitmap in pixels
+ */
+void draw_bitmap_compressed_4bit(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
+{
+	uint16_t bitmap_pos = 0;
+	uint16_t processed_pixels = 0;
+	uint8_t pixel_parity = 0;    //if pixel is even = 0; odd = 1
+
 	for (uint8_t i = y0; i < y0 + y_size; i++)
 	{
 		for (uint8_t j = x0; j < x0 + x_size; j++)
 		{
-			draw_pixel(frame_buffer, j, i, bitmap[bitmap_pos]);
-			bitmap_pos++;
+			pixel_parity = processed_pixels % 2;
+
+			if(pixel_parity == 0)
+			{
+				draw_pixel(frame_buffer, j, i, bitmap[bitmap_pos] >> 4);
+				processed_pixels++;
+			}
+			else
+			{
+				draw_pixel(frame_buffer, j, i, bitmap[bitmap_pos]);
+				processed_pixels++;
+				bitmap_pos++;
+			}
 		}
 	}
 }
