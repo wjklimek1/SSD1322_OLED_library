@@ -18,6 +18,7 @@
 #include "../SSD1322_OLED_lib/SSD1322_GFX.h"
 
 #include <stdlib.h>
+#include <math.h>
 
 const GFXfont *gfx_font = NULL;     //pointer to Adafruit font that is currently selected
 
@@ -205,6 +206,120 @@ void draw_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uin
 		{
 			y0 += ystep;
 			err += dx;
+		}
+	}
+}
+
+//====================== draw antialiased sloping line using Xiaolin Wu's aghoritm ========================//
+/**
+ *  @brief Draws antialiased sloping line using Xiaolin Wu's aghoritm.
+ *
+ *  Doesn't work for lines with brightness = 1, probably because of rounding errors.
+ *  Can be also used to draw vertical and horizontal lines.
+ *
+ *  @param[in] frame_buffer
+ *             array of pixel values
+ *  @param[in] x0
+ *             x position of line beginning
+ *  @param[in] y0
+ *             y position of line beginning
+ *  @param[in] x1
+ *             x position of line ending
+ *  @param[in] y1
+ *             y position of line ending
+ * 	@param[in] brightness
+ *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
+*/
+void draw_AA_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
+{
+	//handle horizontal and vertical lines with appropriate functions
+	if (x0 == x1)
+	{
+		draw_vline(frame_buffer, x0, y0, y1, brightness);
+	}
+	if (y0 == y1)
+	{
+		draw_hline(frame_buffer, y0, x0, x1, brightness);
+	}
+
+	uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
+
+	if (steep)
+	{
+		uint16_t tmp = y0;
+		y0 = x0;
+		x0 = tmp;
+		tmp = y1;
+		y1 = x1;
+		x1 = tmp;
+	}
+	if (x0 > x1)
+	{
+		uint16_t tmp = x0;
+		x0 = x1;
+		x1 = tmp;
+		tmp = y0;
+		y0 = y1;
+		y1 = tmp;
+	}
+
+	float dx = x1 - x0;
+	float dy = y1 - y0;
+	float gradient = dy / dx;
+
+	// handle first endpoint
+	float xend = round(x0);
+	float yend = y0 + gradient * (xend - x0);
+	float xgap =  1 - ((x0 + 0.5) - floor(x0 + 0.5));
+	float xpxl1 = xend; // this will be used in the main loop
+	float ypxl1 = floor(yend);
+	if (steep)
+	{
+		draw_pixel(frame_buffer, ypxl1, xpxl1, (1-(yend - (floor(yend))) * xgap)*brightness);
+		draw_pixel(frame_buffer, ypxl1 + 1, xpxl1, (yend - (floor(yend)) * xgap)*brightness);
+	}
+	else
+	{
+		draw_pixel(frame_buffer, xpxl1, ypxl1, (1-(yend - (floor(yend))) * xgap)*brightness);
+		draw_pixel(frame_buffer, xpxl1, ypxl1 + 1, (yend - (floor(yend)) * xgap)*brightness);
+	}
+
+	float intery = yend + gradient; // first y-intersection for the main loop
+
+	// handle second endpoint
+	xend = round(x1);
+	yend = y1 + gradient * (xend - x1);
+	xgap = (x1 + 0.5) - floor(x1 + 0.5);
+	float xpxl2 = xend; //this will be used in the main loop
+	float ypxl2 = floor(yend);
+	if (steep)
+	{
+		draw_pixel(frame_buffer, ypxl2, xpxl2, (1 - (yend - floor(yend)) * xgap)*brightness);
+		draw_pixel(frame_buffer, ypxl2 + 1, xpxl2, ((yend - floor(yend)) * xgap)*brightness);
+	}
+	else
+	{
+		draw_pixel(frame_buffer, xpxl2, ypxl2, (1 - (yend - floor(yend)) * xgap)*brightness);
+		draw_pixel(frame_buffer, xpxl2, ypxl2 + 1, ((yend - floor(yend)) * xgap)*brightness);
+	}
+
+	// main loop
+	if (steep)
+	{
+		for (int x = xpxl1 + 1; x <= xpxl2 - 1; x++)
+		{
+			draw_pixel(frame_buffer, floor(intery), x, (1 - (intery - floor(intery)))*brightness);
+			draw_pixel(frame_buffer, floor(intery) + 1, x, (intery - floor(intery))*brightness);
+			intery = intery + gradient;
+		}
+	}
+	else
+	{
+		for (int x = xpxl1 + 1; x <= xpxl2 - 1; x++)
+		{
+			draw_pixel(frame_buffer, x, floor(intery), (1 - (intery - floor(intery)))*brightness);
+			draw_pixel(frame_buffer, x, floor(intery) + 1, (intery - floor(intery))*brightness);
+			intery = intery + gradient;
 		}
 	}
 }
