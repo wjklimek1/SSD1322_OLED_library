@@ -18,9 +18,6 @@
 
 /*============ defines ============*/
 
-#define BUFFER_HEIGHT 64
-#define BUFFER_WIDTH 256
-
 #define OLED_HEIGHT 64
 #define OLED_WIDTH 256
 
@@ -47,6 +44,7 @@ typedef struct {
 
 /*============ functions ============*/
 
+void set_buffer_size(uint16_t buffer_width, uint16_t buffer_height);
 void draw_pixel(uint8_t *frame_buffer, uint16_t x, uint16_t y, uint8_t brightness);
 void draw_vline(uint8_t *frame_buffer, uint16_t x, uint16_t y0, uint16_t y1, uint8_t brightness);
 void draw_hline(uint8_t *frame_buffer, uint16_t y, uint16_t x0, uint16_t x1, uint8_t brightness);

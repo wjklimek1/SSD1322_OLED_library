@@ -22,12 +22,35 @@
 
 const GFXfont *gfx_font = NULL;     //pointer to Adafruit font that is currently selected
 
+uint16_t _buffer_height = 64;       //buffer dimensions used to determine if pixel is within array bounds
+uint16_t _buffer_width = 256;      //by default buffer size is equal to OLED size
+
+//====================== set buffer size ========================//
+/**
+ *  @brief Overwrites expected frame buffer dimensions
+ *
+ *	Buffer size is used in draw_pixel() function to determine if pixel is within array bounds.
+ *
+ *  By default frame buffer size is 256x64 - equal to size of OLED screen. You may want to change it,
+ *  for example to use scrolling effet.
+ *
+ *  @param[in] _buffer_width
+ *             new x size of a buffer in pixels
+ *  @param[in] buffer_height
+ *  		   new y size of a buffer in pixels
+ */
+void set_buffer_size(uint16_t _buffer_width, uint16_t buffer_height)
+{
+	_buffer_height = buffer_height;
+	_buffer_width = _buffer_width;
+}
 //====================== draw pixel ========================//
 /**
  *  @brief Draws one pixel on frame buffer
  *
  *  Draws pixel of specified brightness on given coordinates on frame buffer.
- *  Pixels drawn outside buffer outline are ignored to avoid "segfault".
+ *  Pixels drawn outside buffer outline are ignored to avoid overwriting
+ *  memory outside frame buffer - "segfault".
  *
  *  @param[in] frame_buffer
  *             array of pixel values
@@ -40,16 +63,16 @@ const GFXfont *gfx_font = NULL;     //pointer to Adafruit font that is currently
  */
 void draw_pixel(uint8_t *frame_buffer, uint16_t x, uint16_t y, uint8_t brightness)
 {
-	if(x > (BUFFER_WIDTH-1) || y > (BUFFER_HEIGHT-1))
+	if(x > (_buffer_width-1) || y > (_buffer_height-1))
 		return;
 
-	if ((y * BUFFER_WIDTH + x) % 2 == 1)
+	if ((y * _buffer_width + x) % 2 == 1)
 	{
-		frame_buffer[((y * BUFFER_WIDTH) + x) / 2] = (frame_buffer[((y * BUFFER_WIDTH) + x) / 2] & 0xF0) | brightness;
+		frame_buffer[((y * _buffer_width) + x) / 2] = (frame_buffer[((y * _buffer_width) + x) / 2] & 0xF0) | brightness;
 	}
 	else
 	{
-		frame_buffer[((y * BUFFER_WIDTH) + x) / 2] = (frame_buffer[((y * BUFFER_WIDTH) + x) / 2] & 0x0F) | (brightness << 4);
+		frame_buffer[((y * _buffer_width) + x) / 2] = (frame_buffer[((y * _buffer_width) + x) / 2] & 0x0F) | (brightness << 4);
 	}
 }
 
