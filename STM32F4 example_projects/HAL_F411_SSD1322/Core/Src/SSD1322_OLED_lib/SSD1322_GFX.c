@@ -39,11 +39,33 @@ uint16_t _buffer_width = 256;      //by default buffer size is equal to OLED siz
  *  @param[in] buffer_height
  *  		   new y size of a buffer in pixels
  */
+
+
 void set_buffer_size(uint16_t _buffer_width, uint16_t buffer_height)
 {
 	_buffer_height = buffer_height;
 	_buffer_width = _buffer_width;
 }
+
+//====================== fill buffer ========================//
+/**
+ *  @brief Fill buffer with specified brightness
+ *
+ *  @param[in] frame_buffer
+ *             array of pixel values
+ *  @param[in] brightness
+ *             brightness value of pixel (range 0-15 dec or 0x00-0x0F hex)
+ */
+void fill_buffer(uint8_t *frame_buffer, uint8_t brightness)
+{
+	uint8_t byte_value = (brightness << 4) | brightness;
+	uint32_t buffer_size = _buffer_height * _buffer_width / 2;
+	while (buffer_size--)
+	{
+		*frame_buffer++ = byte_value;
+	}
+}
+
 //====================== draw pixel ========================//
 /**
  *  @brief Draws one pixel on frame buffer

@@ -116,16 +116,14 @@ int main(void)
 	//Call initialization seqence for SSD1322
 	SSD1322_API_init();
 
-	//Set frame buffer size in pixels - it is used to avoid writing to memory outside frame buffer.
-	set_buffer_size(256, 64);
-
 	while (1)
 	{
+		//Set frame buffer size in pixels - it is used to avoid writing to memory outside frame buffer.
+		//Normally it has to only be done once on initialization, but buffer size is changed near the end of while(1);
+		set_buffer_size(256, 64);
 		// Fill buffer with zeros to clear any garbage values
-		for (int i = 0; i < 256 * 64 / 2; i++)
-		{
-			tx_buf[i] = 0;
-		}
+		fill_buffer(tx_buf, 0);
+
 		// send a frame buffer to the display
 		send_buffer_to_OLED(tx_buf, 0, 0);
 		HAL_Delay(2000);
@@ -171,11 +169,10 @@ int main(void)
 		send_buffer_to_OLED(tx_buf, 0, 0);
 		HAL_Delay(2000);
 
-		//clean buffer and display 8-bit grayscale bitmap (ony first 4 bits are actually written to memory)
-		for (int i = 0; i < 256 * 64 / 2; i++)
-		{
-			tx_buf[i] = 0;
-		}
+		//clean buffer
+		fill_buffer(tx_buf, 0);
+
+		//display 8-bit grayscale bitmap (ony first 4 bits are actually written to memory)
 		draw_bitmap(tx_buf, pat_i_mat, 0, 0, 64, 64);
 		draw_bitmap(tx_buf, krecik, 128, 0, 64, 64);
 		// send a frame buffer to the display
@@ -210,11 +207,7 @@ int main(void)
 		SSD1322_API_sleep_off();
 
 		//clean buffer
-		for (int i = 0; i < 256 * 64 / 2; i++)
-		{
-			tx_buf[i] = 0;
-		}
-
+		fill_buffer(tx_buf, 0);
 
 		// now let's try to write some text with a font
 		// first thing to do is font selection
