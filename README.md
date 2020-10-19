@@ -17,10 +17,12 @@ Provided example is made for Nucleo F411RE development board with STM32F411RET6 
 | SPI SCK | PB0  | A3 |
 | SPI MOSI| PA10 | D2 |
 
+[![Alt text](https://img.youtube.com/vi/iXRTsFQyKdo&fbclid/0.jpg)](https://www.youtube.com/watch?v=iXRTsFQyKdo&fbclid)
+
 # Examples with DMA
 In a folder with examples for STM32F411 also two projects utilizing DMA data strasfers were included. First one uses DMA in blocking mode, so CPU has to wait for transmission end to leave a function. This still gives some preformance boost, especially for frame buffer transfers.
 
-In a second example DMA works in non blocking mode, so CPU only commissions DMA transfer and thel leaves function. That takes much less CPU time, but **library in this example was changed slightly to handle CS pin in a different way.**
+In a second example DMA works in non blocking mode, so CPU only commissions DMA transfer and then leaves function. That takes much less CPU time, but **library in this example was changed slightly to handle CS pin in a different way.**
 
 Following changes were made to enable non blocking mode DMA:
   - CS pin is set high again in ```SPI_TX_Completed()``` callback
@@ -39,6 +41,10 @@ Due to layered structure of library you have to provide only following functions
   - delay milliseconds
   
 Dont be afraid of that delay. It is only used in init sequence to drive RESET pin low for a few milliseconds. 
+# SPI configuration
+SSD1322 expects different SPI clock phase and polarity than CubeMX gives by default. Setting should be following:
+   - clock polarity (CPOL) = High
+   - clock phase (CPHA) = 2 Edge 
 
 # Adafruit fonts
 GFX library can draw text with fonts provided by [AdafruitGFX][AdafruitGFX] library. To write text with Adafruit font include font file and select font with function:
