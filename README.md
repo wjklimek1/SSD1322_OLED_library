@@ -17,7 +17,8 @@ Provided example is made for Nucleo F411RE development board with STM32F411RET6 
 | SPI SCK | PB0  | A3 |
 | SPI MOSI| PA10 | D2 |
 
-[![Alt text](https://img.youtube.com/vi/iXRTsFQyKdo&fbclid/0.jpg)](https://www.youtube.com/watch?v=iXRTsFQyKdo&fbclid)
+**Click image below to watch effect of example code on YouTube**
+[![](http://img.youtube.com/vi/iXRTsFQyKdo/0.jpg)](http://www.youtube.com/watch?v=iXRTsFQyKdo "SSD1322 presentation")
 
 # Examples with DMA
 In a folder with examples for STM32F411 also two projects utilizing DMA data strasfers were included. First one uses DMA in blocking mode, so CPU has to wait for transmission end to leave a function. This still gives some preformance boost, especially for frame buffer transfers.
