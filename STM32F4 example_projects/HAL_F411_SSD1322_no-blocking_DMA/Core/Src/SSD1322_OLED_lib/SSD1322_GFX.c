@@ -119,14 +119,14 @@ void draw_vline(uint8_t *frame_buffer, uint16_t x, uint16_t y0, uint16_t y1, uin
 {
 	if(y0 < y1)
 	{
-		for (uint8_t i = y0; i <= y1; i++)
+		for (uint16_t i = y0; i <= y1; i++)
 		{
 			draw_pixel(frame_buffer, x, i, brightness);
 		}
 	}
 	else
 	{
-		for (uint8_t i = y1; i <= y0; i++)
+		for (uint16_t i = y1; i <= y0; i++)
 		{
 			draw_pixel(frame_buffer, x, i, brightness);
 		}
@@ -154,14 +154,14 @@ void draw_hline(uint8_t *frame_buffer, uint16_t y, uint16_t x0, uint16_t x1, uin
 {
 	if(x0 < x1)
 	{
-		for (uint8_t i = x0; i <= x1; i++)
+		for (uint16_t i = x0; i <= x1; i++)
 		{
 			draw_pixel(frame_buffer, i, y, brightness);
 		}
 	}
 	else
 	{
-		for (uint8_t i = x1; i <= x0; i++)
+		for (uint16_t i = x1; i <= x0; i++)
 		{
 			draw_pixel(frame_buffer, i, y, brightness);
 		}
@@ -415,9 +415,9 @@ void draw_rect(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uin
  */
 void draw_rect_filled(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
 {
-	for (uint8_t i = x0; i <= x1; i++)
+	for (uint16_t i = x0; i <= x1; i++)
 	{
-		for (uint8_t j = y0; j <= y1; j++)
+		for (uint16_t j = y0; j <= y1; j++)
 		{
 			draw_pixel(frame_buffer, i, j, brightness);
 		}
