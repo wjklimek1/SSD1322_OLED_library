@@ -19,6 +19,10 @@
 #ifndef SSD1322_HW_DRIVER_H
 #define SSD1322_HW_DRIVER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 void SSD1322_HW_drive_CS_low();
@@ -30,5 +34,9 @@ void SSD1322_HW_drive_RESET_high();
 void SSD1322_HW_SPI_send_byte(uint8_t byte_to_transmit);
 void SSD1322_HW_SPI_send_array(uint8_t *array_to_transmit, uint32_t array_size);
 void SSD1322_HW_msDelay(uint32_t milliseconds);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SSD1322_HW_DRIVER_H */

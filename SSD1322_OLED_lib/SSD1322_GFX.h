@@ -16,6 +16,10 @@
 #ifndef SSD1322_GFX_H
 #define SSD1322_GFX_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*============ defines ============*/
 
 #define OLED_HEIGHT 64
@@ -63,5 +67,8 @@ void draw_text(uint8_t *frame_buffer, const char* text, uint16_t x, uint16_t y, 
 
 void send_buffer_to_OLED(uint8_t *frame_buffer, uint16_t start_x, uint16_t start_y);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SSD1322_GFX_H */

@@ -16,6 +16,10 @@
 #ifndef SSD1322_API_H
 #define SSD1322_API_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "../SSD1322_OLED_lib/SSD1322_HW_Driver.h"
 
 /*============ Commands defines ============*/
@@ -86,5 +90,9 @@ void SSD1322_API_default_grayscale();
 
 void SSD1322_API_set_window(uint8_t start_column, uint8_t end_column, uint8_t start_row, uint8_t end_row);
 void SSD1322_API_send_buffer(uint8_t* buffer, uint32_t buffer_size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SSD1322_API_H */

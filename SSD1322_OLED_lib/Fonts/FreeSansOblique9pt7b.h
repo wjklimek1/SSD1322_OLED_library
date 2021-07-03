@@ -30,6 +30,10 @@ POSSIBILITY OF SUCH DAMAGE
 #ifndef FREESANSOBLIQUE9PT7B_H
 #define FREESANSOBLIQUE9PT7B_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 const uint8_t FreeSansOblique9pt7bBitmaps[] = {
     0x10, 0x84, 0x22, 0x10, 0x84, 0x42, 0x10, 0x08, 0x00, 0xDE, 0xE5, 0x20,
     0x06, 0x40, 0x88, 0x13, 0x06, 0x43, 0xFE, 0x32, 0x04, 0x40, 0x98, 0x32,
@@ -252,5 +256,9 @@ const GFXfont FreeSansOblique9pt7b = {
 	22};
 
 // Approx. 2041 bytes
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SRC_SSD1322_OLED_LIB_FONTS_FREESANSOBLIQUE9PT7B_H_ */
