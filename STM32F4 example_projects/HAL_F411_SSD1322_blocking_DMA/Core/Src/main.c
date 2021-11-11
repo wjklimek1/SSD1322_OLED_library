@@ -37,6 +37,7 @@
 #include "creeper.h"
 #include "krecik.h"
 #include "pat_i_mat.h"
+#include "stars_4bpp.h"
 
 /* USER CODE END Includes */
 
@@ -183,11 +184,16 @@ int main(void)
 		fill_buffer(tx_buf, 0);
 
 		//display 8-bit grayscale bitmap (ony first 4 bits are actually written to memory)
-		draw_bitmap(tx_buf, pat_i_mat, 0, 0, 64, 64);
-		draw_bitmap(tx_buf, krecik, 128, 0, 64, 64);
+		draw_bitmap_8bpp(tx_buf, pat_i_mat, 0, 0, 64, 64);
+		draw_bitmap_8bpp(tx_buf, krecik, 128, 0, 64, 64);
 		// send a frame buffer to the display
 		send_buffer_to_OLED(tx_buf, 0, 0);
 		HAL_Delay(5000);
+
+		//display 4-bit grayscale bitmap (one byte in bitmap array corresponds to two pixels)
+		draw_bitmap_4bpp(tx_buf, stars_4bpp, 0, 0, 256, 64);
+		send_buffer_to_OLED(tx_buf, 0, 0);
+		HAL_Delay(3000);
 
 		//you can invert screen colors using API function
 		SSD1322_API_set_display_mode(SSD1322_MODE_INVERTED);
@@ -243,7 +249,7 @@ int main(void)
 		set_buffer_size(256, 256);
 
 		//now print a huge bitmap into frame buffer
-		draw_bitmap(tx_buf2, creeper, 0, 0, 256, 256);
+		draw_bitmap_8bpp(tx_buf2, creeper, 0, 0, 256, 256);
 		send_buffer_to_OLED(tx_buf2, 0, 0);
 		HAL_Delay(2000);
 

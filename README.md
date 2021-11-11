@@ -59,14 +59,19 @@ select_font(&FreeMono12pt7b);
 When font is already selected you can use it to write text on screen. It works only for null terminated strings!
 
 # Bitmaps
-General function to draw bitmap is:
+Two bitmap formats are supported:
 ```c
-void draw_bitmap(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size);
+void draw_bitmap_8bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size);
 ```
 It draws bitmap where one pixel corresponds to one byte - just an 8bit grayscale bitmaps.
 
-There is also a function that can draw "compressed" bitmaps, where 2 pixels are coded into a single byte. This function remains untested, because i haven't found any suitable converter :(
+```c
+void draw_bitmap_4bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size);
+```
+Here one byte in bitmap stores brightness value for two pixels - just like in the actual framebuffer.
 
+To convert bitmaps to 8 or 4 bits per pixel grayscale depth you can use converter from [this link][converter], downloading software "Converting bitmap to Hex". It's a bit buggy but worked for most bitmaps I tried to convert.
 
 [//]: #
    [AdafruitGFX]: <https://github.com/adafruit/Adafruit-GFX-Library> 
+   [converter]: <https://www.topwaydisplay.com/en/drivers-tools> 

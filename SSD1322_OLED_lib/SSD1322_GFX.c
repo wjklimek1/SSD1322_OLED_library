@@ -477,10 +477,10 @@ void draw_circle(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t r, ui
 
 //====================== draw bitmap ========================//
 /**
- *  @brief Draws 8-bit uncompressed bitmap to frame buffer.
+ *  @brief Draws 8 bits per pixel bitmap to frame buffer.
  *
  *  Only 4 first bits of grayscale byte are written to frame buffer. For example, if pixel value in bitmap
- *  is 0x14 (0b00010100), this byte is cut in half (0b0001 0100) and only first half is used.
+ *  is 0x14 (0b00010100), this byte is cut in half (0b0001 0100) and only first half (0b0001) is used.
  *
  *  You can use any image to bitmap converter as long as it gives you an 8-bit grayscale color depth array.
  *
@@ -497,7 +497,7 @@ void draw_circle(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t r, ui
  *  @param[in] y_size
  *             height of bitmap in pixels
  */
-void draw_bitmap(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
+void draw_bitmap_8bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
 {
 	uint16_t bitmap_pos = 0;
 
@@ -513,9 +513,9 @@ void draw_bitmap(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint
 
 //====================== draw 4-bit bitmap ========================//
 /**
- *  @brief Draws bitmap with 4-bit grayscale depth to frame buffer.
+ *  @brief Draws bitmap with 4 bit per pixel grayscale depth to frame buffer.
  *
- * 	Writes bitmap where 2 pixels are coden in a single byte.
+ * 	Writes bitmap where 2 pixels are coded in a single byte.
  *
  * 	WARNING: This function is still untested!
  *
@@ -532,15 +532,15 @@ void draw_bitmap(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint
  *  @param[in] y_size
  *             height of bitmap in pixels
  */
-void draw_bitmap_compressed_4bit(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
+void draw_bitmap_4bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
 {
-	uint16_t bitmap_pos = 0;
+	uint16_t bitmap_pos = 0;       //byte index in bitmap array
 	uint16_t processed_pixels = 0;
-	uint8_t pixel_parity = 0;    //if pixel is even = 0; odd = 1
+	uint8_t pixel_parity = 0;      //if pixel is even = 0; odd = 1
 
-	for (uint8_t i = y0; i < y0 + y_size; i++)
+	for (uint16_t i = y0; i < y0 + y_size; i++)
 	{
-		for (uint8_t j = x0; j < x0 + x_size; j++)
+		for (uint16_t j = x0; j < x0 + x_size; j++)
 		{
 			pixel_parity = processed_pixels % 2;
 
