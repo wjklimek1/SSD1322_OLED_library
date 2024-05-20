@@ -34,17 +34,17 @@ uint16_t _buffer_width = 256;      //by default buffer size is equal to OLED siz
  *  By default frame buffer size is 256x64 - equal to size of OLED screen. You may want to change it,
  *  for example to use scrolling effet.
  *
- *  @param[in] _buffer_width
+ *  @param[in] buffer_width
  *             new x size of a buffer in pixels
  *  @param[in] buffer_height
  *  		   new y size of a buffer in pixels
  */
 
 
-void set_buffer_size(uint16_t _buffer_width, uint16_t buffer_height)
+void set_buffer_size(uint16_t buffer_width, uint16_t buffer_height)
 {
+	_buffer_width = buffer_width;
 	_buffer_height = buffer_height;
-	_buffer_width = _buffer_width;
 }
 
 //====================== fill buffer ========================//
